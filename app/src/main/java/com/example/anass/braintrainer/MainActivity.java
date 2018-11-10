@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onStartClick(View view) {
-
         if (gameState == 0) {
             generateNewQuestion();
             enableChoices(true);
@@ -86,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //TODO give the option the player to chose game time
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
