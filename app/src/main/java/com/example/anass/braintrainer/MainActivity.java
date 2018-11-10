@@ -2,6 +2,7 @@ package com.example.anass.braintrainer;
 
 import android.graphics.Color;
 import android.os.CountDownTimer;
+import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -160,15 +161,18 @@ public class MainActivity extends AppCompatActivity {
         //answer
         int min = correctAnswer - 5;
         int max = correctAnswer + 5;
+        ArraySet<Integer> closeAnswers = new ArraySet<>();
 
         for (Button btn : tmpChoices) {
             int closeAnswer = rand.nextInt((max - min) + 1) + min;
             //checking if the randomly generated answer is the same as the correct answer
             //if yes generate a new one until it s not the same
+
             while (true) {
-                if (closeAnswer == correctAnswer) {
+                if (closeAnswer == correctAnswer || closeAnswers.contains(closeAnswer)) {
                     closeAnswer = rand.nextInt((max - min) + 1) + min;
                 } else {
+                    closeAnswers.add(closeAnswer);
                     break;
                 }
             }
