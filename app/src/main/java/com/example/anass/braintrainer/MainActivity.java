@@ -3,6 +3,8 @@ package com.example.anass.braintrainer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -21,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     Button choice2;
     Button choice3;
     Button choice4;
-    Button correctChoice;
+    String correctChoiceTag;
     List<Button> choices;
     int gameState;
 
@@ -32,6 +34,17 @@ public class MainActivity extends AppCompatActivity {
     int correctAnswer;
 
     CountDownTimer gameTime;
+
+    public void onChoiceClick(View view){
+
+        if (view.getTag().toString().equals(correctChoiceTag)){
+            Log.i("i","CORRECT");
+        }else {
+            Log.i("i","FALSE");
+
+        }
+
+    }
 
 
     @Override
@@ -89,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
         //and others  to be close answers in range of 10;
         ArrayList<Button> tmpChoices = new ArrayList<>(choices);
         int randomChoice = rand.nextInt(4);
-        correctChoice = tmpChoices.get(randomChoice);
+        correctChoiceTag = tmpChoices.get(randomChoice).getTag().toString();
         String correctChoiceStr = "" + correctAnswer;
-        correctChoice.setText(correctChoiceStr); //just to avoid some warnings
+        tmpChoices.get(randomChoice).setText(correctChoiceStr); //just to avoid some warnings
         tmpChoices.remove(randomChoice);
         //iterate thought  the remaining choices and populate them with close values to the correct
         //answer
