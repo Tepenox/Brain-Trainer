@@ -1,5 +1,6 @@
 package com.example.anass.braintrainer;
 
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,29 +19,42 @@ public class MainActivity extends AppCompatActivity {
     TextView timerTextView;
     TextView scoreTextView;
     TextView questionTextView;
-    TextView answerTextView;
+    TextView resultTextView;
     Button choice1;
     Button choice2;
     Button choice3;
     Button choice4;
     String correctChoiceTag;
     List<Button> choices;
-    int gameState;
-
     Random rand;
-
+    int gameState;
     int randomNum1;
     int randomNum2;
     int correctAnswer;
-
+    int correctAnswerCounter;
+    int answersCounter;
     CountDownTimer gameTime;
 
-    public void onChoiceClick(View view){
+    public void onChoiceClick(View view) {
+        resultTextView.setVisibility(View.VISIBLE);
+        if (view.getTag().toString().equals(correctChoiceTag)) {
+            // if correct
+            answersCounter++;
+            correctAnswerCounter++;
+            scoreTextView.setText(correctAnswerCounter+"/"+answersCounter);
+            generateNewQuestion();
+            resultTextView.setTextColor(Color.rgb(0, 165, 16));
+            resultTextView.setText("True :)");
+            //TODO add correct sound effect
 
-        if (view.getTag().toString().equals(correctChoiceTag)){
-            Log.i("i","CORRECT");
-        }else {
-            Log.i("i","FALSE");
+        } else {
+            // if no
+            answersCounter++;
+            scoreTextView.setText(correctAnswerCounter+"/"+answersCounter);
+            resultTextView.setTextColor(Color.RED);
+            resultTextView.setText("False :(");
+            generateNewQuestion();
+            //TODO add wrong sound effect
 
         }
 
@@ -55,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         timerTextView = findViewById(R.id.timerTextView);
         scoreTextView = findViewById(R.id.scoreTextView);
         questionTextView = findViewById(R.id.questionTextView);
-        answerTextView = findViewById(R.id.answerTextView);
+        resultTextView = findViewById(R.id.resultTextView);
+        resultTextView.setVisibility(View.INVISIBLE);
         choice1 = findViewById(R.id.choice1);
         choice2 = findViewById(R.id.choice2);
         choice3 = findViewById(R.id.choice3);
@@ -64,10 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 choice4));
         rand = new Random();
 
-        correctAnswer = generateTwoRandomNumber();
-        String questionString = randomNum1 + " + " + randomNum2 + " = " + "?";
-        questionTextView.setText(questionString);
-        populateChoices();
+
+        generateNewQuestion();
 
 
         gameTime = new CountDownTimer(30000, 1000) {
@@ -115,10 +128,10 @@ public class MainActivity extends AppCompatActivity {
             int closeAnswer = rand.nextInt((max - min) + 1) + min;
             //checking if the randomly generated answer is the same as the correct answer
             //if yes generate a new one until it s not the same
-            while (true){
-                if (closeAnswer == correctAnswer){
+            while (true) {
+                if (closeAnswer == correctAnswer) {
                     closeAnswer = rand.nextInt((max - min) + 1) + min;
-                }else {
+                } else {
                     break;
                 }
             }
@@ -127,6 +140,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void generateNewQuestion() {
+        correctAnswer = generateTwoRandomNumber();
+        String questionString = randomNum1 + " + " + randomNum2 + " = " + "?";
+        questionTextView.setText(questionString);
+        populateChoices();
     }
 
 
