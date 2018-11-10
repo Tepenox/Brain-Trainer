@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     TextView scoreTextView;
     TextView questionTextView;
     TextView resultTextView;
+    Button startButton;
     Button choice1;
     Button choice2;
     Button choice3;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     String correctChoiceTag;
     List<Button> choices;
     Random rand;
-    int gameState;
+    int gameState = 0;  //0stooped 1active
     int randomNum1;
     int randomNum2;
     int correctAnswer;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             // if correct
             answersCounter++;
             correctAnswerCounter++;
-            scoreTextView.setText(correctAnswerCounter+"/"+answersCounter);
+            scoreTextView.setText(correctAnswerCounter + "/" + answersCounter);
             generateNewQuestion();
             resultTextView.setTextColor(Color.rgb(0, 165, 16));
             resultTextView.setText("True :)");
@@ -50,13 +50,35 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // if no
             answersCounter++;
-            scoreTextView.setText(correctAnswerCounter+"/"+answersCounter);
+            scoreTextView.setText(correctAnswerCounter + "/" + answersCounter);
             resultTextView.setTextColor(Color.RED);
             resultTextView.setText("False :(");
             generateNewQuestion();
             //TODO add wrong sound effect
 
         }
+
+    }
+
+    public void onStartClick(View view) {
+
+        if (gameState == 0) {
+            generateNewQuestion();
+            gameTime.start();
+            questionTextView.setTextSize(30);
+            startButton.setVisibility(View.INVISIBLE);
+            gameState = 1;
+        }else if (gameState == 1){
+
+            startButton.setText("start");
+            questionTextView.setTextColor(Color.BLACK);
+            questionTextView.setTextSize(15);
+            questionTextView.setText("answer the questions as fast as possible");
+
+
+
+        }
+
 
     }
 
@@ -71,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         questionTextView = findViewById(R.id.questionTextView);
         resultTextView = findViewById(R.id.resultTextView);
         resultTextView.setVisibility(View.INVISIBLE);
+        startButton = findViewById(R.id.startButton);
         choice1 = findViewById(R.id.choice1);
         choice2 = findViewById(R.id.choice2);
         choice3 = findViewById(R.id.choice3);
@@ -79,11 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 choice4));
         rand = new Random();
 
+        questionTextView.setTextSize(15);
+        questionTextView.setText("answer the questions as fast as possible");
 
-        generateNewQuestion();
-
-
-        gameTime = new CountDownTimer(60000, 1000) {
+        gameTime = new CountDownTimer(30000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // update the timer
@@ -96,8 +118,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 //endGame()
+                enableChocies(false);
+                resultTextView.setVisibility(View.INVISIBLE);
+                questionTextView.setTextSize(20);
+                questionTextView.setTextColor(Color.RED);
+                questionTextView.setText("Your score is " + correctAnswerCounter + "/" + answersCounter);
+                startButton.setText("play again");
+                startButton.setVisibility(View.VISIBLE);
+
             }
-        }.start();
+        };
 
 
     }
@@ -148,6 +178,13 @@ public class MainActivity extends AppCompatActivity {
         questionTextView.setText(questionString);
         populateChoices();
     }
+
+    private void enableChocies(boolean isEnabled){
+        for (Button btn : choices)
+            btn.setEnabled(isEnabled);
+    }
+
+
 
 
 }
