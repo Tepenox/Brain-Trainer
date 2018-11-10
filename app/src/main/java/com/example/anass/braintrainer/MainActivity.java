@@ -27,13 +27,36 @@ public class MainActivity extends AppCompatActivity {
     String correctChoiceTag;
     List<Button> choices;
     Random rand;
-    int gameState = 0;  //0stooped 1active
+    int gameState;  //0 stooped 1 finished
     int randomNum1;
     int randomNum2;
     int correctAnswer;
     int correctAnswerCounter;
     int answersCounter;
-    CountDownTimer gameTime;
+    int gameTime = 30; // in seconds
+    CountDownTimer gameCounter;
+
+
+    public void onStartClick(View view) {
+
+        if (gameState == 0) {
+            generateNewQuestion();
+            enableChoices(true);
+            gameCounter.start();
+            questionTextView.setTextSize(30);
+            startButton.setVisibility(View.INVISIBLE);
+            gameState = 1;
+        } else if (gameState == 1) {
+            startButton.setText("start");
+            questionTextView.setTextColor(Color.BLACK);
+            scoreTextView.setText("0/0");
+            clearChoicesText();
+            timerTextView.setText(gameTime + "s");
+            questionTextView.setTextSize(15);
+            questionTextView.setText("answer the questions as fast as possible");
+            gameState = 0;
+        }
+    }
 
     public void onChoiceClick(View view) {
         resultTextView.setVisibility(View.VISIBLE);
@@ -60,28 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onStartClick(View view) {
-
-        if (gameState == 0) {
-            generateNewQuestion();
-            gameTime.start();
-            questionTextView.setTextSize(30);
-            startButton.setVisibility(View.INVISIBLE);
-            gameState = 1;
-        }else if (gameState == 1){
-
-            startButton.setText("start");
-            questionTextView.setTextColor(Color.BLACK);
-            questionTextView.setTextSize(15);
-            questionTextView.setText("answer the questions as fast as possible");
-
-
-
-        }
-
-
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +102,14 @@ public class MainActivity extends AppCompatActivity {
         choices = new ArrayList<>(Arrays.asList(choice1, choice2, choice3,
                 choice4));
         rand = new Random();
-
+        gameState = 0;
+        clearChoicesText();
+        enableChoices(false);
+        timerTextView.setText(gameTime + "s");
         questionTextView.setTextSize(15);
         questionTextView.setText("answer the questions as fast as possible");
 
-        gameTime = new CountDownTimer(30000, 1000) {
+        gameCounter = new CountDownTimer(gameTime * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // update the timer
@@ -118,13 +122,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 //endGame()
-                enableChocies(false);
+                enableChoices(false);
                 resultTextView.setVisibility(View.INVISIBLE);
                 questionTextView.setTextSize(20);
                 questionTextView.setTextColor(Color.RED);
                 questionTextView.setText("Your score is " + correctAnswerCounter + "/" + answersCounter);
                 startButton.setText("play again");
                 startButton.setVisibility(View.VISIBLE);
+                answersCounter = 0;
+                correctAnswerCounter = 0;
+                gameState = 1;
 
             }
         };
@@ -179,12 +186,17 @@ public class MainActivity extends AppCompatActivity {
         populateChoices();
     }
 
-    private void enableChocies(boolean isEnabled){
-        for (Button btn : choices)
+    private void enableChoices(boolean isEnabled) {
+        for (Button btn : choices) {
             btn.setEnabled(isEnabled);
+        }
     }
 
-
+    private void clearChoicesText() {
+        for (Button btn : choices) {
+            btn.setText("");
+        }
+    }
 
 
 }
